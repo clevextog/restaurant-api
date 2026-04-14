@@ -41,3 +41,39 @@ func validEmail(email string) error {
 	}
 	return errors.New("invalid email domain")
 }
+
+func validPassword(password string) error {
+	if password == "" {
+		return errors.New("password is required")
+	}
+	for _, forbiddenSymbol := range notValidationPassword {
+		if strings.Contains(password, forbiddenSymbol) {
+			return errors.New("invalid password")
+		}
+	}
+	if len(password) < 8 {
+		return errors.New("password is too short")
+	}
+	if len(password) > 50 {
+		return errors.New("password is too long")
+	}
+	digitCounter := 0
+	for _, digit := range password {
+		if digit >= '0' && digit <= '9' {
+			digitCounter++
+		}
+	}
+	if digitCounter < 3 {
+		return errors.New("at least 3 digits are required in the password")
+	}
+	uppercaseLetter := 0
+	for _, letter := range password {
+		if letter >= 'A' && letter <= 'Z' {
+			uppercaseLetter++
+		}
+	}
+	if uppercaseLetter < 1 {
+		return errors.New("at least one capital letter is required")
+	}
+	return nil
+}
