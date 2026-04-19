@@ -15,7 +15,7 @@ func fallback(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusNotFound, ErrorResponse{Error: "not found"})
 }
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+func RegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var req RegistrationRequest
 	dec := json.NewDecoder(r.Body)
@@ -43,4 +43,26 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusCreated, MessageResponse{Message: "registration was successful"})
+}
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	var req LoginRequest
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	err := dec.Decode(&req)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, ErrorResponse{Error: "bad request"})
+		return
+	}
+	err = Login(req.Email, req.Password)
+	if err == ErrInvalidCredentials {
+		writeJSON(w, http.StatusUnauthorized, ErrorResponse{Error: ErrInvalidCredentials.Error()})
+		return
+	}
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, ErrorResponse{Error: "internal server error"})
+		return
+	}
+	writeJSON(w, http.StatusOK, MessageResponse{Message: "login was successful"})
 }
