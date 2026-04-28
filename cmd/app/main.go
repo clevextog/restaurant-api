@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/clevextog/restaurant-api/internal/handler"
 	_ "github.com/lib/pq"
 )
 
@@ -25,8 +26,8 @@ func main() {
 	}
 	fmt.Println("connected to database successfully")
 
-	http.HandleFunc("/", fallback)
-	http.Handle("/registration", PostOnlyMW(http.HandlerFunc(RegistrationHandler)))
-	http.Handle("/login", PostOnlyMW(http.HandlerFunc(LoginHandler)))
-	http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/", handler.Fallback)
+	//http.Handle("/registration", PostOnlyMW(http.HandlerFunc(RegistrationHandler)))
+	//http.Handle("/login", PostOnlyMW(http.HandlerFunc(LoginHandler)))
+	//http.ListenAndServe(":8080", nil)
 }
